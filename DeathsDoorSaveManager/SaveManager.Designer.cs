@@ -1,7 +1,5 @@
-﻿namespace HadesSaveManager
-{
-    partial class SaveManager
-    {
+﻿namespace DeathsDoorSaveManager {
+    partial class SaveManager {
         /// <summary>
         ///  Required designer variable.
         /// </summary>
@@ -11,10 +9,8 @@
         ///  Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -26,20 +22,18 @@
         ///  Required method for Designer support - do not modify
         ///  the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SaveManager));
             this.gboxSelectProfile = new System.Windows.Forms.GroupBox();
-            this.radioProfile4 = new System.Windows.Forms.RadioButton();
             this.radioProfile3 = new System.Windows.Forms.RadioButton();
             this.radioProfile2 = new System.Windows.Forms.RadioButton();
             this.radioProfile1 = new System.Windows.Forms.RadioButton();
             this.lblSaveFolder = new System.Windows.Forms.Label();
             this.linkChangeSavePath = new System.Windows.Forms.LinkLabel();
             this.lblSaveFolderPath = new System.Windows.Forms.Label();
-            this.lblRouteFolder = new System.Windows.Forms.Label();
-            this.lblRouteFolderPath = new System.Windows.Forms.Label();
-            this.linkChangeRoutePath = new System.Windows.Forms.LinkLabel();
+            this.lblSnapshotFolder = new System.Windows.Forms.Label();
+            this.lblSnapshotFolderPath = new System.Windows.Forms.Label();
+            this.linkChangeSnapshotPath = new System.Windows.Forms.LinkLabel();
             this.btnCreateSnapshot = new System.Windows.Forms.Button();
             this.txtNewSnapshot = new System.Windows.Forms.TextBox();
             this.gboxNewSnapshot = new System.Windows.Forms.GroupBox();
@@ -50,8 +44,7 @@
             this.btnDeleteSnapshot = new System.Windows.Forms.Button();
             this.cboxLoadSnapshot = new System.Windows.Forms.ComboBox();
             this.linkOpenSaveFolder = new System.Windows.Forms.LinkLabel();
-            this.linkOpenRouteFolder = new System.Windows.Forms.LinkLabel();
-            this.btnLoadSeed = new System.Windows.Forms.Button();
+            this.linkOpenSnapshotFolder = new System.Windows.Forms.LinkLabel();
             this.gboxSelectProfile.SuspendLayout();
             this.gboxNewSnapshot.SuspendLayout();
             this.gboxLoadSnapshot.SuspendLayout();
@@ -59,7 +52,6 @@
             // 
             // gboxSelectProfile
             // 
-            this.gboxSelectProfile.Controls.Add(this.radioProfile4);
             this.gboxSelectProfile.Controls.Add(this.radioProfile3);
             this.gboxSelectProfile.Controls.Add(this.radioProfile2);
             this.gboxSelectProfile.Controls.Add(this.radioProfile1);
@@ -70,23 +62,10 @@
             this.gboxSelectProfile.TabStop = false;
             this.gboxSelectProfile.Text = "Select Profile";
             // 
-            // radioProfile4
-            // 
-            this.radioProfile4.AutoSize = true;
-            this.radioProfile4.Location = new System.Drawing.Point(228, 22);
-            this.radioProfile4.Name = "radioProfile4";
-            this.radioProfile4.Size = new System.Drawing.Size(68, 19);
-            this.radioProfile4.TabIndex = 0;
-            this.radioProfile4.TabStop = true;
-            this.radioProfile4.Tag = "4";
-            this.radioProfile4.Text = "Profile 4";
-            this.radioProfile4.UseVisualStyleBackColor = true;
-            this.radioProfile4.CheckedChanged += new System.EventHandler(this.RadioProfile_CheckedChanged);
-            // 
             // radioProfile3
             // 
             this.radioProfile3.AutoSize = true;
-            this.radioProfile3.Location = new System.Drawing.Point(154, 22);
+            this.radioProfile3.Location = new System.Drawing.Point(201, 22);
             this.radioProfile3.Name = "radioProfile3";
             this.radioProfile3.Size = new System.Drawing.Size(68, 19);
             this.radioProfile3.TabIndex = 0;
@@ -99,7 +78,7 @@
             // radioProfile2
             // 
             this.radioProfile2.AutoSize = true;
-            this.radioProfile2.Location = new System.Drawing.Point(80, 22);
+            this.radioProfile2.Location = new System.Drawing.Point(117, 22);
             this.radioProfile2.Name = "radioProfile2";
             this.radioProfile2.Size = new System.Drawing.Size(68, 19);
             this.radioProfile2.TabIndex = 0;
@@ -112,7 +91,7 @@
             // radioProfile1
             // 
             this.radioProfile1.AutoSize = true;
-            this.radioProfile1.Location = new System.Drawing.Point(6, 22);
+            this.radioProfile1.Location = new System.Drawing.Point(33, 22);
             this.radioProfile1.Name = "radioProfile1";
             this.radioProfile1.Size = new System.Drawing.Size(68, 19);
             this.radioProfile1.TabIndex = 0;
@@ -127,9 +106,9 @@
             this.lblSaveFolder.AutoSize = true;
             this.lblSaveFolder.Location = new System.Drawing.Point(12, 78);
             this.lblSaveFolder.Name = "lblSaveFolder";
-            this.lblSaveFolder.Size = new System.Drawing.Size(103, 15);
+            this.lblSaveFolder.Size = new System.Drawing.Size(67, 15);
             this.lblSaveFolder.TabIndex = 1;
-            this.lblSaveFolder.Text = "Hades Save Folder";
+            this.lblSaveFolder.Text = "Save Folder";
             // 
             // linkChangeSavePath
             // 
@@ -151,34 +130,34 @@
             this.lblSaveFolderPath.TabIndex = 3;
             this.lblSaveFolderPath.Text = "<No Path Selected>";
             // 
-            // lblRouteFolder
+            // lblSnapshotFolder
             // 
-            this.lblRouteFolder.AutoSize = true;
-            this.lblRouteFolder.Location = new System.Drawing.Point(12, 139);
-            this.lblRouteFolder.Name = "lblRouteFolder";
-            this.lblRouteFolder.Size = new System.Drawing.Size(74, 15);
-            this.lblRouteFolder.TabIndex = 1;
-            this.lblRouteFolder.Text = "Route Folder";
+            this.lblSnapshotFolder.AutoSize = true;
+            this.lblSnapshotFolder.Location = new System.Drawing.Point(12, 139);
+            this.lblSnapshotFolder.Name = "lblSnapshotFolder";
+            this.lblSnapshotFolder.Size = new System.Drawing.Size(92, 15);
+            this.lblSnapshotFolder.TabIndex = 1;
+            this.lblSnapshotFolder.Text = "Snapshot Folder";
             // 
-            // lblRouteFolderPath
+            // lblSnapshotFolderPath
             // 
-            this.lblRouteFolderPath.AutoSize = true;
-            this.lblRouteFolderPath.Location = new System.Drawing.Point(12, 163);
-            this.lblRouteFolderPath.Name = "lblRouteFolderPath";
-            this.lblRouteFolderPath.Size = new System.Drawing.Size(113, 15);
-            this.lblRouteFolderPath.TabIndex = 3;
-            this.lblRouteFolderPath.Text = "<No Path Selected>";
+            this.lblSnapshotFolderPath.AutoSize = true;
+            this.lblSnapshotFolderPath.Location = new System.Drawing.Point(12, 163);
+            this.lblSnapshotFolderPath.Name = "lblSnapshotFolderPath";
+            this.lblSnapshotFolderPath.Size = new System.Drawing.Size(113, 15);
+            this.lblSnapshotFolderPath.TabIndex = 3;
+            this.lblSnapshotFolderPath.Text = "<No Path Selected>";
             // 
-            // linkChangeRoutePath
+            // linkChangeSnapshotPath
             // 
-            this.linkChangeRoutePath.AutoSize = true;
-            this.linkChangeRoutePath.Location = new System.Drawing.Point(92, 139);
-            this.linkChangeRoutePath.Name = "linkChangeRoutePath";
-            this.linkChangeRoutePath.Size = new System.Drawing.Size(56, 15);
-            this.linkChangeRoutePath.TabIndex = 2;
-            this.linkChangeRoutePath.TabStop = true;
-            this.linkChangeRoutePath.Text = "(Change)";
-            this.linkChangeRoutePath.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkChangePath_LinkClicked);
+            this.linkChangeSnapshotPath.AutoSize = true;
+            this.linkChangeSnapshotPath.Location = new System.Drawing.Point(121, 139);
+            this.linkChangeSnapshotPath.Name = "linkChangeSnapshotPath";
+            this.linkChangeSnapshotPath.Size = new System.Drawing.Size(56, 15);
+            this.linkChangeSnapshotPath.TabIndex = 2;
+            this.linkChangeSnapshotPath.TabStop = true;
+            this.linkChangeSnapshotPath.Text = "(Change)";
+            this.linkChangeSnapshotPath.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkChangePath_LinkClicked);
             // 
             // btnCreateSnapshot
             // 
@@ -280,47 +259,36 @@
             this.linkOpenSaveFolder.Text = "(Open)";
             this.linkOpenSaveFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkOpenFolder_LinkClicked);
             // 
-            // linkOpenRouteFolder
+            // linkOpenSnapshotFolder
             // 
-            this.linkOpenRouteFolder.AutoSize = true;
-            this.linkOpenRouteFolder.Location = new System.Drawing.Point(154, 139);
-            this.linkOpenRouteFolder.Name = "linkOpenRouteFolder";
-            this.linkOpenRouteFolder.Size = new System.Drawing.Size(44, 15);
-            this.linkOpenRouteFolder.TabIndex = 2;
-            this.linkOpenRouteFolder.TabStop = true;
-            this.linkOpenRouteFolder.Text = "(Open)";
-            this.linkOpenRouteFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkOpenFolder_LinkClicked);
-            // 
-            // btnLoadSeed
-            // 
-            this.btnLoadSeed.Location = new System.Drawing.Point(230, 159);
-            this.btnLoadSeed.Name = "btnLoadSeed";
-            this.btnLoadSeed.Size = new System.Drawing.Size(75, 23);
-            this.btnLoadSeed.TabIndex = 8;
-            this.btnLoadSeed.Text = "Load Seed";
-            this.btnLoadSeed.UseVisualStyleBackColor = true;
-            this.btnLoadSeed.Click += new System.EventHandler(this.BtnLoadSeed_Click);
+            this.linkOpenSnapshotFolder.AutoSize = true;
+            this.linkOpenSnapshotFolder.Location = new System.Drawing.Point(183, 139);
+            this.linkOpenSnapshotFolder.Name = "linkOpenSnapshotFolder";
+            this.linkOpenSnapshotFolder.Size = new System.Drawing.Size(44, 15);
+            this.linkOpenSnapshotFolder.TabIndex = 2;
+            this.linkOpenSnapshotFolder.TabStop = true;
+            this.linkOpenSnapshotFolder.Text = "(Open)";
+            this.linkOpenSnapshotFolder.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkOpenFolder_LinkClicked);
             // 
             // SaveManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(323, 429);
-            this.Controls.Add(this.btnLoadSeed);
-            this.Controls.Add(this.linkOpenRouteFolder);
+            this.Controls.Add(this.linkOpenSnapshotFolder);
             this.Controls.Add(this.linkOpenSaveFolder);
             this.Controls.Add(this.gboxLoadSnapshot);
             this.Controls.Add(this.gboxNewSnapshot);
-            this.Controls.Add(this.linkChangeRoutePath);
-            this.Controls.Add(this.lblRouteFolderPath);
-            this.Controls.Add(this.lblRouteFolder);
+            this.Controls.Add(this.linkChangeSnapshotPath);
+            this.Controls.Add(this.lblSnapshotFolderPath);
+            this.Controls.Add(this.lblSnapshotFolder);
             this.Controls.Add(this.lblSaveFolderPath);
             this.Controls.Add(this.linkChangeSavePath);
             this.Controls.Add(this.lblSaveFolder);
             this.Controls.Add(this.gboxSelectProfile);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SaveManager";
-            this.Text = "Hades Save Manager";
+            this.Text = "Death\'s Door Save Manager";
             this.gboxSelectProfile.ResumeLayout(false);
             this.gboxSelectProfile.PerformLayout();
             this.gboxNewSnapshot.ResumeLayout(false);
@@ -335,16 +303,15 @@
         #endregion
 
         private System.Windows.Forms.GroupBox gboxSelectProfile;
-        private System.Windows.Forms.RadioButton radioProfile4;
         private System.Windows.Forms.RadioButton radioProfile3;
         private System.Windows.Forms.RadioButton radioProfile2;
         private System.Windows.Forms.RadioButton radioProfile1;
         private System.Windows.Forms.Label lblSaveFolder;
         private System.Windows.Forms.LinkLabel linkChangeSavePath;
         private System.Windows.Forms.Label lblSaveFolderPath;
-        private System.Windows.Forms.Label lblRouteFolder;
-        private System.Windows.Forms.Label lblRouteFolderPath;
-        private System.Windows.Forms.LinkLabel linkChangeRoutePath;
+        private System.Windows.Forms.Label lblSnapshotFolder;
+        private System.Windows.Forms.Label lblSnapshotFolderPath;
+        private System.Windows.Forms.LinkLabel linkChangeSnapshotPath;
         private System.Windows.Forms.Button btnCreateSnapshot;
         private System.Windows.Forms.TextBox txtNewSnapshot;
         private System.Windows.Forms.GroupBox gboxNewSnapshot;
@@ -354,9 +321,8 @@
         private System.Windows.Forms.GroupBox gboxLoadSnapshot;
         private System.Windows.Forms.ComboBox cboxLoadSnapshot;
         private System.Windows.Forms.LinkLabel linkOpenSaveFolder;
-        private System.Windows.Forms.LinkLabel linkOpenRouteFolder;
+        private System.Windows.Forms.LinkLabel linkOpenSnapshotFolder;
         private System.Windows.Forms.Button btnDeleteSnapshot;
-        private System.Windows.Forms.Button btnLoadSeed;
     }
 }
 

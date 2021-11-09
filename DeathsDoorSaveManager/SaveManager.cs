@@ -4,14 +4,13 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
-namespace HadesSaveManager {
+namespace DeathsDoorSaveManager {
     public partial class SaveManager : Form {
         private int profileNum;
-        private string saveFolder, routeFolder;
-        private readonly Dictionary<string, string> fileMap;
+        private string saveFolder, snapshotFolder;
+        private readonly string bakNameFmt, runNameFmt, snapshotNameFmt;
         private bool confirmLoad;
 
         /// <summary>
@@ -20,16 +19,12 @@ namespace HadesSaveManager {
         public SaveManager() {
             profileNum = 1;
             saveFolder = "";
-            routeFolder = "";
+            snapshotFolder = "";
             confirmLoad = true;
 
-            fileMap = new Dictionary<string, string> {
-                ["profile"] = "Profile{0}.sav",
-                ["run"] = "Profile{0}_Temp.sav",
-                ["settings"] = "Profile{0}.sjson",
-                ["controls"] = "Profile{0}.ctrls",
-                ["v"] = "Profile{0}.v.sav",
-            };
+            runNameFmt = "Save_slot{0}.sav";
+            bakNameFmt = "Save_slot{0}.bak";
+            snapshotNameFmt = "{0}.ddsm";
 
             InitializeComponent();
 
@@ -38,8 +33,8 @@ namespace HadesSaveManager {
             if (saveFolder != "" && saveFolder != null)
                 lblSaveFolderPath.Text = saveFolder;
 
-            if (routeFolder != "" && saveFolder != null)
-                lblRouteFolderPath.Text = routeFolder;
+            if (snapshotFolder != "" && snapshotFolder != null)
+                lblSnapshotFolderPath.Text = snapshotFolder;
 
             switch (profileNum) {
                 case 1:
@@ -50,9 +45,6 @@ namespace HadesSaveManager {
                     break;
                 case 3:
                     radioProfile3.Checked = true;
-                    break;
-                case 4:
-                    radioProfile4.Checked = true;
                     break;
                 default:
                     profileNum = 1;
@@ -70,8 +62,8 @@ namespace HadesSaveManager {
         private void LinkChangePath_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             if (sender.Equals(linkChangeSavePath)) {
                 ChangeSelectedFolder(ref saveFolder, lblSaveFolderPath);
-            } else if (sender.Equals(linkChangeRoutePath)) {
-                ChangeSelectedFolder(ref routeFolder, lblRouteFolderPath);
+            } else if (sender.Equals(linkChangeSnapshotPath)) {
+                ChangeSelectedFolder(ref snapshotFolder, lblSnapshotFolderPath);
             }
         }
 
@@ -85,8 +77,8 @@ namespace HadesSaveManager {
             string targetFolder;
             if (sender.Equals(linkOpenSaveFolder)) {
                 targetFolder = saveFolder;
-            } else if (sender.Equals(linkOpenRouteFolder)) {
-                targetFolder = routeFolder;
+            } else if (sender.Equals(linkOpenSnapshotFolder)) {
+                targetFolder = snapshotFolder;
             } else {
                 return;
             }
@@ -122,25 +114,6 @@ namespace HadesSaveManager {
 
             Dictionary<string, string> paths = GetPaths(snapshotName);
 
-            if (!File.Exists(paths["profile"])) {
-                MessageBox.Show(
-                    String.Format("Profile {0} does not exist.", profileNum),
-                    "No Profile",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error
-                );
-                return;
-            }
-
-            if (File.Exists(paths["routeProfile"]) && !FileCompare(paths["profile"], paths["routeProfile"])) {
-                DialogResult overwriteSeed = MessageBox.Show(
-                    String.Format("A different seed already exists for this route. Would you like to overwrite this route?"),
-                    "Overwrite Seed?",
-                    MessageBoxButtons.YesNo
-                );
-
-                if (overwriteSeed != DialogResult.Yes) return;
-            }
-
             if (File.Exists(paths["snapshot"])) {
                 // If the snapshot is the same, don't bother replacing it.
                 if (FileCompare(paths["snapshot"], paths["run"])) return;
@@ -154,12 +127,7 @@ namespace HadesSaveManager {
                 if (overwriteSnapshot != DialogResult.Yes) return;
             }
 
-            File.Copy(paths["profile"], paths["routeProfile"], true);
             File.Copy(paths["run"], paths["snapshot"], true);
-
-            if (!File.Exists(paths["routeSettings"])) {
-                File.Copy(paths["settings"], paths["routeSettings"], true);
-            }
 
             ReloadSnapshots();
         }
@@ -183,8 +151,8 @@ namespace HadesSaveManager {
 
             Dictionary<string, string> paths = GetPaths(snapshotName);
 
-            if (File.Exists(paths["routeProfile"])) {
-                if (confirmLoad && (File.Exists(paths["profile"]) || File.Exists(paths["run"]))) {
+            if (File.Exists(paths["snapshot"])) {
+                if (confirmLoad && (File.Exists(paths["run"]))) {
                     DialogResult overwriteRun = MessageBox.Show(
                        String.Format("This will overwrite profile {0}. Are you sure you want to do this?", profileNum),
                        "Overwrite Run?",
@@ -198,64 +166,9 @@ namespace HadesSaveManager {
                 }
 
                 File.Delete(paths["runBackup"]);
-                File.Delete(paths["settingsBackup"]);
-                File.Delete(paths["profile"]);
                 File.Delete(paths["run"]);
 
-                MakeValidCheckpoint();
-
-                File.Copy(paths["routeProfile"], paths["profile"], true);
                 File.Copy(paths["snapshot"], paths["run"], true);
-            }
-        }
-
-        /// <summary>
-        /// Load the Profile for the selected Route, but no run
-        /// </summary>
-        /// <param name="sender">Button that was clicked</param>
-        /// <param name="e">EventArgs for the click</param>
-        private void BtnLoadSeed_Click(object sender, EventArgs e) {
-
-            string currentRunFile = String.Format(fileMap["run"], profileNum.ToString());
-            string profileFile = String.Format(fileMap["profile"], profileNum.ToString());
-            string settingsFile = String.Format(fileMap["settings"], profileNum.ToString());
-
-            Dictionary<string, string> paths = new Dictionary<string, string> {
-                ["run"] = Path.Combine(saveFolder, currentRunFile),
-                ["profile"] = Path.Combine(saveFolder, profileFile),
-                ["settings"] = Path.Combine(saveFolder, settingsFile),
-                ["routeProfile"] = Path.Combine(routeFolder, @"Profile.sav"),
-                ["routeSettings"] = Path.Combine(routeFolder, @"Profile.sjson"),
-            };
-
-            paths["runBackup"] = paths["run"] + ".bak";
-            paths["settingsBackup"] = paths["settings"] + ".bak";
-
-            if (!FoldersInitialized())
-                return;
-
-            if (File.Exists(paths["routeProfile"])) {
-                if (confirmLoad && (File.Exists(paths["profile"]) || File.Exists(paths["run"]))) {
-                    DialogResult overwriteRun = MessageBox.Show(
-                       String.Format("This will overwrite profile {0}. Are you sure you want to do this?", profileNum),
-                       "Overwrite Run?",
-                       MessageBoxButtons.YesNo
-                    );
-
-                    if (overwriteRun != DialogResult.Yes) return;
-
-                    // Once they've confirmed once for this profile, don't ask again
-                    confirmLoad = false;
-                }
-
-                File.Delete(paths["runBackup"]);
-                File.Delete(paths["settingsBackup"]);
-                File.Delete(paths["profile"]);
-                File.Delete(paths["run"]);
-
-                MakeValidCheckpoint();
-
-                File.Copy(paths["routeProfile"], paths["profile"], true);
             }
         }
 
@@ -275,7 +188,7 @@ namespace HadesSaveManager {
             if (!FoldersInitialized())
                 return;
 
-            string snapshotPath = Path.Combine(routeFolder, snapshotName + ".hsm");
+            string snapshotPath = Path.Combine(snapshotFolder, snapshotName + ".hsm");
             if (File.Exists(snapshotPath)) {
                 DialogResult deleteSnapshot = MessageBox.Show(
                     String.Format("YOU ARE DELETING {0}. Are you sure you want to do this?", snapshotName),
@@ -322,11 +235,11 @@ namespace HadesSaveManager {
         /// updates cboxLoadSnapshot with the list of snapshots.
         /// </summary>
         private void ReloadSnapshots() {
-            if (routeFolder == "") return;
+            if (snapshotFolder == "") return;
 
             cboxLoadSnapshot.Items.Clear();
-            foreach (string routeFile in Directory.GetFiles(routeFolder)) {
-                if (Path.GetExtension(routeFile) == ".hsm") {
+            foreach (string routeFile in Directory.GetFiles(snapshotFolder)) {
+                if (Path.GetExtension(routeFile) == ".ddsm") {
                     cboxLoadSnapshot.Items.Add(Path.GetFileNameWithoutExtension(routeFile));
                 }
             }
@@ -342,8 +255,8 @@ namespace HadesSaveManager {
                 return false;
             }
 
-            if (routeFolder == "") {
-                MessageBox.Show("Please select a route folder.", "Unknown Route Folder", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (snapshotFolder == "") {
+                MessageBox.Show("Please select a snapshot folder.", "Unknown Snapshot Folder", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
@@ -355,57 +268,17 @@ namespace HadesSaveManager {
         /// </summary>
         /// <returns>Dictionary of strings containing all paths</returns>
         private Dictionary<string, string> GetPaths(string snapshotName) {
-            string currentRunFile = String.Format(fileMap["run"], profileNum.ToString());
-            string profileFile = String.Format(fileMap["profile"], profileNum.ToString());
-            string settingsFile = String.Format(fileMap["settings"], profileNum.ToString());
+            string runFile = String.Format(runNameFmt, profileNum.ToString());
+            string snapshotFile = String.Format(snapshotNameFmt, snapshotName);
+            string backupFile = String.Format(bakNameFmt, profileNum.ToString());
 
             Dictionary<string, string> paths = new Dictionary<string, string> {
-                ["snapshot"] = Path.Combine(routeFolder, snapshotName + ".hsm"),
-                ["run"] = Path.Combine(saveFolder, currentRunFile),
-                ["profile"] = Path.Combine(saveFolder, profileFile),
-                ["settings"] = Path.Combine(saveFolder, settingsFile),
-                ["routeProfile"] = Path.Combine(routeFolder, @"Profile.sav"),
-                ["routeSettings"] = Path.Combine(routeFolder, @"Profile.sjson"),
+                ["snapshot"] = Path.Combine(snapshotFolder, snapshotFile),
+                ["run"] = Path.Combine(saveFolder, runFile),
+                ["runBackup"] = Path.Combine(saveFolder, backupFile)
             };
 
-            paths["runBackup"] = paths["run"] + ".bak";
-            paths["settingsBackup"] = paths["settings"] + ".bak";
-
             return paths;
-        }
-
-        /// <summary>
-        /// Hades uses a flag in the Profile.sjson file to determine whether to load _Temp.
-        /// MakeValidCheckpoint modifies the .sjson to enable _Temp loading. 
-        /// </summary>
-        /// <returns>true if successfully enabled _Temp loading</returns>
-        private bool MakeValidCheckpoint() {
-            string settingsFormatted = String.Format(fileMap["settings"], profileNum.ToString());
-            string profileSettingsFile = Path.Combine(saveFolder, settingsFormatted);
-            string routeSettingsFile = Path.Combine(routeFolder, @"Profile.sjson");
-
-            if (!File.Exists(profileSettingsFile)) {
-                if (!File.Exists(routeSettingsFile))
-                    return false;
-
-                File.Copy(routeSettingsFile, profileSettingsFile);
-            }
-
-            string tempFile = Path.GetTempFileName();
-
-            using (var settingsReader = new StreamReader(profileSettingsFile))
-            using (var tempWriter = new StreamWriter(tempFile)) {
-                string line;
-
-                while ((line = settingsReader.ReadLine()) != null) {
-                    if (line.Trim() != "ValidCheckpoint = false")
-                        tempWriter.WriteLine(line);
-                }
-            }
-
-            File.Delete(profileSettingsFile);
-            File.Move(tempFile, profileSettingsFile);
-            return SetValidFlag();
         }
 
         /// <summary>
@@ -417,7 +290,7 @@ namespace HadesSaveManager {
 
             Dictionary<string, string> stateSettings = new Dictionary<string, string> {
                 ["saveFolder"] = saveFolder,
-                ["routeFolder"] = routeFolder,
+                ["snapshotFolder"] = snapshotFolder,
                 ["profileNum"] = profileNum.ToString(),
             };
 
@@ -451,9 +324,9 @@ namespace HadesSaveManager {
             if (tempSaveFolder != null && tempSaveFolder != "" && Directory.Exists(tempSaveFolder))
                 saveFolder = tempSaveFolder;
 
-            stateSettings.TryGetValue("routeFolder", out string tempRouteFolder);
-            if (tempRouteFolder != null && tempRouteFolder != "" && Directory.Exists(tempRouteFolder))
-                routeFolder = tempRouteFolder;
+            stateSettings.TryGetValue("snapshotFolder", out string tempSnapshotFolder);
+            if (tempSnapshotFolder != null && tempSnapshotFolder != "" && Directory.Exists(tempSnapshotFolder))
+                snapshotFolder = tempSnapshotFolder;
 
             stateSettings.TryGetValue("profileNum", out string profileStr);
             if (profileStr != null)
@@ -529,34 +402,6 @@ namespace HadesSaveManager {
             // equal to "file2byte" at this point only if the files are
             // the same.
             return ((file1byte - file2byte) == 0);
-        }
-
-        /// <summary>
-        /// Version 1.0 of Hades added a file that tracks the validity of a
-        /// checkpoint. This means we have to modify that file when loading a
-        /// snapshot, in order to tell the game to grab it.
-        /// </summary>
-        /// <returns>true if successfully set valid flag</returns>
-        private bool SetValidFlag() {
-            string validFormatted = String.Format(fileMap["v"], profileNum.ToString());
-            string profileValidFile = Path.Combine(saveFolder, validFormatted);
-
-            if (!File.Exists(profileValidFile)) {
-                return true;
-            }
-
-            Byte[] byte_array;
-            using (var validReader = new BinaryReader(File.Open(profileValidFile, FileMode.Open)))
-                byte_array = validReader.ReadBytes(9);
-                byte_array[8] = 1;
-
-            string tempFile = Path.GetTempFileName();
-            using (var validWriter = new BinaryWriter(File.Open(tempFile, FileMode.Create)))
-                validWriter.Write(byte_array);
-
-            File.Delete(profileValidFile);
-            File.Move(tempFile, profileValidFile);
-            return true;
         }
     }
 }
